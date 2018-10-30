@@ -1,0 +1,54 @@
+需要下载的教程：
+    java9新特性
+    MybatisPlus
+    通用Mapper
+    Spring注解
+    SpringBoot全套
+    SpringCloud
+    Dubbo
+
+docker映射：
+    docker run -p 8080:8080 -p 50000:50000 -v /opt/docker/jenks/jenkins_home:/var/jenkins_home  -v /opt/jdk1.8.0_191:/opt/jdk8 -v /usr/bin/git:/opt/git -v /opt/apache-maven-3.3.9:/opt/maven3.3.9 jenkins
+    docker run -d --name tomcat01 -p 8888:8080 -v /opt/docker/tomcat01/webapps:/usr/local/tomcat/webapps -v /opt/docker/tomcat01/logs:/usr/local/tomcat/logs tomcat
+
+执行脚本：
+#!/bin/bash 
+tomcat_path=/opt/docker/tomcat01
+project=easy-springmvc-maven
+war_name=easy-springmvc-maven.war
+war_path=http://http://192.168.56.128:8080/docker/jenkins/jenkins_home/job/jeekins-test/ws/target
+server_port=8888
+file_path=/docker/jenkins/jenkins_home/jobs/jenkins-test/workspace/target
+ 
+now=$(date +"%Y%m%d%H%M%S")
+echo "the shell execute time is ${now}"
+ 
+echo `lsof -n -P -t -i :${server_port}`
+tomcat_pid=`lsof -n -P -t -i :${server_port}`
+echo "the tomcat_pid is ${tomcat_pid}"
+ 
+if [ "${tomcat_pid}" != "" ]; then 
+   kill -9 $tomcat_pid
+   echo "kill the server"
+fi 
+echo "rm ${tomcat_path}/webapps/${war_name}"
+rm ${tomcat_path}/webapps/${war_name}
+echo "rm -rf ${tomcat_path}/webapps/${project}"
+rm -rf ${tomcat_path}/webapps/${project}
+cd $file_path
+if [ -f ${war_name} ]; then 
+   cp ${war_name} ${tomcat_path}/webapps
+else
+   echo "${war_name} unexists"
+fi
+export JAVA_HOME=/data/jdk7
+export CATALINA_HOME2=/usr/local/apache-tomcat-2
+export CATALINA_BASE2=/usr/local/apache-tomcat-2
+$tomcat_path/bin/startup.sh
+echo "server restarted"
+
+
+记事本：
+Linux包管理：apt/rpm/yum
+Linux和Windows文件传输方式
+GitLab是什么
